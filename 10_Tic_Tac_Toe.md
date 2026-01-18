@@ -1,5 +1,115 @@
 # Tic Tac Toe - Low Level Design
 
+## UML Class Diagram
+
+```
+┌─────────────────────────────────┐
+│          Board                  │
+├─────────────────────────────────┤
+│ - cells: Cell[][]               │
+│ - SIZE: int = 3                 │
+├─────────────────────────────────┤
+│ + makeMove(row, col, symbol)    │
+│ + isFull(): boolean             │
+│ + checkWin(symbol): boolean     │
+│ + display()                     │
+│ - checkRow(): boolean           │
+│ - checkColumn(): boolean        │
+│ - checkDiagonals(): boolean     │
+└─────────────────────────────────┘
+           │ 3x3
+           ▼
+    ┌──────────────────────┐
+    │       Cell           │
+    ├──────────────────────┤
+    │ - row: int           │
+    │ - col: int           │
+    │ - symbol: Symbol     │
+    ├──────────────────────┤
+    │ + isEmpty(): boolean │
+    │ + getSymbol()        │
+    │ + setSymbol()        │
+    └──────────────────────┘
+
+
+┌─────────────────────────────────┐
+│          Player                 │
+├─────────────────────────────────┤
+│ - name: String                  │
+│ - symbol: Symbol                │
+├─────────────────────────────────┤
+│ + getName(): String             │
+│ + getSymbol(): Symbol           │
+└─────────────────────────────────┘
+           △
+           │
+    ┌──────┴──────┐
+    │             │
+┌─────────┐  ┌──────────┐
+│ Player  │  │AIPlayer  │
+└─────────┘  └──────────┘
+
+
+┌─────────────────────────────────┐
+│         AIPlayer                │
+├─────────────────────────────────┤
+│ - difficulty: DifficultyLevel   │
+├─────────────────────────────────┤
+│ + getMove(board): Move          │
+│ - getRandomMove(): Move         │
+│ - getSmartMove(): Move          │
+│ - getMiniMaxMove(): Move        │
+│ - minimax(board, bool): int     │
+│ - findWinningMove(): Move       │
+│ - getAvailableMoves(): List     │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│      TicTacToeGame              │
+├─────────────────────────────────┤
+│ - board: Board                  │
+│ - player1: Player               │
+│ - player2: Player               │
+│ - currentPlayer: Player         │
+│ - status: GameStatus            │
+├─────────────────────────────────┤
+│ + makeMove(row, col): boolean   │
+│ + start()                       │
+└─────────────────────────────────┘
+           │ 1
+           │
+           │ 1
+           ▼
+    ┌──────────┐
+    │  Board   │
+    └──────────┘
+
+
+┌─────────────────────────────────┐
+│          Move                   │
+├─────────────────────────────────┤
+│ + row: int                      │
+│ + col: int                      │
+└─────────────────────────────────┘
+
+
+<<enumeration>>        <<enumeration>>
+Symbol                 GameStatus
+───────────           ──────────────
+X                     IN_PROGRESS
+O                     WIN
+EMPTY                 DRAW
+
+
+<<enumeration>>
+DifficultyLevel
+───────────────
+EASY
+MEDIUM
+HARD
+```
+
 ## Core Classes
 
 ```java

@@ -1,5 +1,101 @@
 # LRU Cache - Low Level Design
 
+## UML Class Diagram
+
+```
+┌─────────────────────────────────────┐
+│        LRUCache<K, V>               │
+├─────────────────────────────────────┤
+│ - capacity: int                     │
+│ - cache: Map<K, Node>               │
+│ - head: Node                        │
+│ - tail: Node                        │
+├─────────────────────────────────────┤
+│ + get(key: K): V                    │
+│ + put(key: K, value: V)             │
+│ - addToHead(node: Node)             │
+│ - removeNode(node: Node)            │
+│ - moveToHead(node: Node)            │
+│ - removeTail(): Node                │
+└─────────────────────────────────────┘
+           │
+           │ contains
+           ▼
+    ┌──────────────────┐
+    │    Node          │
+    ├──────────────────┤
+    │ - key: K         │
+    │ - value: V       │
+    │ - prev: Node     │
+    │ - next: Node     │
+    └──────────────────┘
+
+
+┌─────────────────────────────────────┐
+│      MyHashMap<K, V>                │
+├─────────────────────────────────────┤
+│ - buckets: Entry<K,V>[]             │
+│ - size: int                         │
+│ - capacity: int                     │
+│ - LOAD_FACTOR: float                │
+├─────────────────────────────────────┤
+│ + put(key: K, value: V)             │
+│ + get(key: K): V                    │
+│ + remove(key: K)                    │
+│ - getIndex(key: K): int             │
+│ - resize()                          │
+└─────────────────────────────────────┘
+           │
+           │ contains
+           ▼
+    ┌──────────────────┐
+    │ Entry<K, V>      │
+    ├──────────────────┤
+    │ - key: K         │
+    │ - value: V       │
+    │ - next: Entry    │
+    └──────────────────┘
+
+
+┌─────────────────────────────────────┐
+│           Trie                      │
+├─────────────────────────────────────┤
+│ - root: TrieNode                    │
+├─────────────────────────────────────┤
+│ + insert(word: String)              │
+│ + search(word: String): boolean     │
+│ + startsWith(prefix: String)        │
+│ + delete(word: String)              │
+│ + autoComplete(prefix: String)      │
+│ + countWordsWithPrefix()            │
+└─────────────────────────────────────┘
+           │
+           │ contains
+           ▼
+    ┌──────────────────────────────┐
+    │       TrieNode               │
+    ├──────────────────────────────┤
+    │ - children: Map<Char,Node>   │
+    │ - isEndOfWord: boolean       │
+    │ - wordCount: int             │
+    └──────────────────────────────┘
+
+
+┌─────────────────────────────────────┐
+│    AutocompleteSystem              │
+├─────────────────────────────────────┤
+│ - trie: Trie                        │
+├─────────────────────────────────────┤
+│ + getSuggestions(prefix: String)    │
+└─────────────────────────────────────┘
+           │
+           │ uses
+           ▼
+    ┌──────────────┐
+    │    Trie      │
+    └──────────────┘
+```
+
 ## Core Classes
 
 ```java

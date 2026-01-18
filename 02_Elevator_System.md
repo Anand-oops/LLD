@@ -3,6 +3,132 @@
 ## Problem Statement
 Design an elevator control system for a building with multiple elevators and floors.
 
+## UML Class Diagram
+
+```
+┌──────────────────────────────────┐
+│         Elevator                 │
+├──────────────────────────────────┤
+│ - id: int                        │
+│ - currentFloor: int              │
+│ - direction: Direction           │
+│ - state: ElevatorState           │
+│ - capacity: int                  │
+│ - currentLoad: int               │
+│ - upStops: TreeSet<Integer>      │
+│ - downStops: TreeSet<Integer>    │
+├──────────────────────────────────┤
+│ + addStop(floor: int)            │
+│ + move()                         │
+│ + emergencyStop()                │
+│ + getTotalPendingStops()         │
+└──────────────────────────────────┘
+           △
+           │ manages
+           │
+┌──────────────────────────────────┐
+│     ElevatorController           │
+├──────────────────────────────────┤
+│ - elevators: List<Elevator>      │
+│ - pendingRequests: Queue         │
+│ - strategy: SelectionStrategy    │
+│ - numberOfFloors: int            │
+├──────────────────────────────────┤
+│ + requestElevator()              │
+│ + selectDestination()            │
+│ + run()                          │
+│ + step()                         │
+│ + displayStatus()                │
+└──────────────────────────────────┘
+           │
+           │ uses
+           ▼
+┌──────────────────────────────────┐
+│   <<interface>>                  │
+│ ElevatorSelectionStrategy        │
+├──────────────────────────────────┤
+│ + selectElevator()               │
+└──────────────────────────────────┘
+           △
+           │
+    ┌──────┴─────────┬────────────────┐
+    │                │                │
+┌─────────────┐ ┌──────────┐ ┌────────────────┐
+│ Optimal     │ │ Nearest  │ │LoadBalancing   │
+│ Strategy    │ │Strategy  │ │   Strategy     │
+└─────────────┘ └──────────┘ └────────────────┘
+
+
+┌──────────────────────────────────┐
+│           Request                │
+├──────────────────────────────────┤
+│ - sourceFloor: int               │
+│ - destinationFloor: int          │
+│ - direction: Direction           │
+│ - timestamp: long                │
+├──────────────────────────────────┤
+│ + getSourceFloor()               │
+│ + getDestinationFloor()          │
+│ + getDirection()                 │
+└──────────────────────────────────┘
+
+
+┌──────────────────────────────────┐
+│          Building                │
+├──────────────────────────────────┤
+│ - numberOfFloors: int            │
+│ - controller: ElevatorController │
+│ - name: String                   │
+├──────────────────────────────────┤
+│ + requestElevator()              │
+│ + startSimulation()              │
+└──────────────────────────────────┘
+           │ 1
+           │
+           │ 1
+           ▼
+┌──────────────────────────────────┐
+│     ElevatorController           │
+└──────────────────────────────────┘
+
+
+┌──────────────────────────────────┐
+│       DisplayPanel               │
+├──────────────────────────────────┤
+│ - elevatorId: int                │
+│ - externalDisplay: Display       │
+│ - internalDisplay: Display       │
+├──────────────────────────────────┤
+│ + updateDisplay()                │
+└──────────────────────────────────┘
+           │
+           │ uses
+           ▼
+┌──────────────────────────────────┐
+│   <<interface>>                  │
+│         Display                  │
+├──────────────────────────────────┤
+│ + show(floor, direction)         │
+└──────────────────────────────────┘
+           △
+           │
+    ┌──────┴──────┐
+    │             │
+┌─────────────┐ ┌──────────────┐
+│ External    │ │  Internal    │
+│ Display     │ │  Display     │
+└─────────────┘ └──────────────┘
+
+
+<<enumeration>>          <<enumeration>>
+Direction                ElevatorState
+─────────────           ─────────────
+UP                      IDLE
+DOWN                    MOVING
+IDLE                    STOPPED
+                        MAINTENANCE
+```
+
 ## Requirements
 1. Multiple elevators in a building
 2. Users can request elevator from any floor

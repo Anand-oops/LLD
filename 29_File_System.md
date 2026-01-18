@@ -1,5 +1,117 @@
 # File System - Low Level Design
 
+## UML Class Diagram
+
+```
+┌─────────────────────────────────┐
+│     <<abstract>>                │
+│   FileSystemEntity              │
+├─────────────────────────────────┤
+│ # name: String                  │
+│ # path: String                  │
+│ # createdAt: LocalDateTime      │
+│ # modifiedAt: LocalDateTime     │
+│ # size: long                    │
+│ # owner: User                   │
+│ # permissions: Permissions      │
+├─────────────────────────────────┤
+│ + getSize(): long               │
+│ + display(indent: int)          │
+│ + getName(): String             │
+│ + getPath(): String             │
+└─────────────────────────────────┘
+           △
+           │
+    ┌──────┴──────┐
+    │             │
+┌─────────┐  ┌──────────┐
+│  File   │  │Directory │
+└─────────┘  └──────────┘
+
+
+┌─────────────────────────────────┐
+│           File                  │
+├─────────────────────────────────┤
+│ - content: String               │
+│ - extension: String             │
+├─────────────────────────────────┤
+│ + write(data: String)           │
+│ + read(): String                │
+│ + getSize(): long               │
+│ + display(indent: int)          │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│        Directory                │
+├─────────────────────────────────┤
+│ - children: Map<String,Entity>  │
+├─────────────────────────────────┤
+│ + addChild(entity)              │
+│ + removeChild(name)             │
+│ + getChild(name): Entity        │
+│ + listContents(): List          │
+│ + getSize(): long               │
+│ + display(indent: int)          │
+└─────────────────────────────────┘
+           │ *
+           │
+           │ contains
+           ▼
+    ┌──────────────────┐
+    │FileSystemEntity  │
+    └──────────────────┘
+
+
+┌─────────────────────────────────┐
+│   <<Singleton>>                 │
+│       FileSystem                │
+├─────────────────────────────────┤
+│ - instance: FileSystem          │
+│ - root: Directory               │
+│ - pathCache: Map                │
+├─────────────────────────────────┤
+│ + getInstance()                 │
+│ + createFile(path): File        │
+│ + createDirectory(path): Dir    │
+│ + delete(path): boolean         │
+│ + getEntity(path): Entity       │
+│ + listDirectory(path): List     │
+│ + displayTree()                 │
+│ + search(keyword): List         │
+│ - parsePath(path): String[]     │
+│ - searchHelper()                │
+└─────────────────────────────────┘
+           │ 1
+           │
+           │ 1
+           ▼
+    ┌──────────┐
+    │Directory │
+    │ (root)   │
+    └──────────┘
+
+
+┌─────────────────────────────────┐
+│           User                  │
+├─────────────────────────────────┤
+│ - username: String              │
+│ - userId: String                │
+├─────────────────────────────────┤
+│ + getUsername(): String         │
+│ + getUserId(): String           │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│       Permissions               │
+├─────────────────────────────────┤
+│ - canRead: boolean              │
+│ - canWrite: boolean             │
+│ - canExecute: boolean           │
+└─────────────────────────────────┘
+```
+
 ## Core Classes
 
 ```java

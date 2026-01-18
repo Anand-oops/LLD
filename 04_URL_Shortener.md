@@ -3,6 +3,149 @@
 ## Problem Statement
 Design a URL shortening service like bit.ly or tinyurl that converts long URLs into short, shareable links.
 
+## UML Class Diagram
+
+```
+┌────────────────────────────────────┐
+│           URL                      │
+├────────────────────────────────────┤
+│ - id: String                       │
+│ - shortUrl: String                 │
+│ - longUrl: String                  │
+│ - userId: String                   │
+│ - createdAt: LocalDateTime         │
+│ - expiresAt: LocalDateTime         │
+│ - clickCount: int                  │
+│ - status: URLStatus                │
+├────────────────────────────────────┤
+│ + isExpired(): boolean             │
+│ + incrementClickCount()            │
+│ + deactivate()                     │
+└────────────────────────────────────┘
+
+
+┌────────────────────────────────────┐
+│       URLShortener                 │
+├────────────────────────────────────┤
+│ - urlDatabase: Map<String,URL>     │
+│ - reverseMap: Map<String,String>   │
+│ - encodingStrategy: Strategy       │
+│ - counter: Counter                 │
+├────────────────────────────────────┤
+│ + shortenURL(longUrl): String      │
+│ + expandURL(shortUrl): String      │
+│ + getAnalytics(): URLAnalytics     │
+│ + deleteURL(): boolean             │
+│ - generateShortCode(): String      │
+└────────────────────────────────────┘
+           │
+           │ uses
+           ▼
+┌────────────────────────────────────┐
+│   <<interface>>                    │
+│    EncodingStrategy                │
+├────────────────────────────────────┤
+│ + encode(id: long): String         │
+│ + decode(shortCode: String): long  │
+└────────────────────────────────────┘
+           △
+           │
+    ┌──────┴──────┐
+    │             │
+┌─────────────┐ ┌──────────────┐
+│Base62       │ │ MD5          │
+│Encoding     │ │ Encoding     │
+└─────────────┘ └──────────────┘
+
+
+┌────────────────────────────────────┐
+│          Counter                   │
+├────────────────────────────────────┤
+│ - counter: AtomicLong              │
+├────────────────────────────────────┤
+│ + getNextId(): long                │
+└────────────────────────────────────┘
+
+
+┌────────────────────────────────────┐
+│  DistributedIdGenerator            │
+├────────────────────────────────────┤
+│ - workerId: long                   │
+│ - sequence: long                   │
+│ - lastTimestamp: long              │
+├────────────────────────────────────┤
+│ + nextId(): long                   │
+│ - waitNextMillis(): long           │
+└────────────────────────────────────┘
+
+
+┌────────────────────────────────────┐
+│   <<Singleton>>                    │
+│    AnalyticsService                │
+├────────────────────────────────────┤
+│ - instance: AnalyticsService       │
+│ - clickHistory: Map                │
+├────────────────────────────────────┤
+│ + getInstance()                    │
+│ + recordClick(url: URL)            │
+│ + getAnalytics(): URLAnalytics     │
+└────────────────────────────────────┘
+           │
+           │ creates
+           ▼
+┌────────────────────────────────────┐
+│       ClickEvent                   │
+├────────────────────────────────────┤
+│ - urlId: String                    │
+│ - timestamp: LocalDateTime         │
+│ - clientInfo: ClientInfo           │
+└────────────────────────────────────┘
+           │
+           │ contains
+           ▼
+┌────────────────────────────────────┐
+│       ClientInfo                   │
+├────────────────────────────────────┤
+│ - ipAddress: String                │
+│ - userAgent: String                │
+│ - location: String                 │
+└────────────────────────────────────┘
+
+
+┌────────────────────────────────────┐
+│       URLAnalytics                 │
+├────────────────────────────────────┤
+│ - urlId: String                    │
+│ - totalClicks: int                 │
+│ - createdAt: LocalDateTime         │
+│ - clicksByCountry: Map             │
+│ - clicksByDate: Map                │
+├────────────────────────────────────┤
+│ + displayAnalytics()               │
+└────────────────────────────────────┘
+
+
+┌────────────────────────────────────┐
+│         URLCache                   │
+├────────────────────────────────────┤
+│ - cache: Cache<String,String>      │
+│ - MAX_SIZE: int                    │
+│ - TTL_MINUTES: int                 │
+├────────────────────────────────────┤
+│ + get(shortCode): String           │
+│ + put(shortCode, longUrl)          │
+│ + invalidate(shortCode)            │
+└────────────────────────────────────┘
+
+
+<<enumeration>>
+URLStatus
+─────────────
+ACTIVE
+INACTIVE
+EXPIRED
+```
+
 ## Requirements
 1. Generate unique short URLs
 2. Redirect short URL to original URL

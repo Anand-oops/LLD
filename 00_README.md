@@ -37,22 +37,30 @@ This comprehensive guide covers all major Low Level Design patterns and systems 
 |------|-------------|----------|
 | **INTERVIEW_GUIDE.md** | Complete interview strategy, tips, patterns | ⭐⭐⭐ Must Read |
 | **00_README.md** | This file - navigation guide | ⭐⭐⭐ Start here |
+| **UML_DIAGRAMS_INDEX.md** | Index of all UML diagrams with explanations | ⭐⭐⭐ NEW! |
+| **UML_QUICK_REFERENCE.md** | UML notation guide and symbols | ⭐⭐ Reference |
 
 ### 📋 Detailed System Designs (Complete Implementations)
 
-| File | System | Complexity | Key Patterns | Time to Read |
-|------|--------|------------|--------------|--------------|
-| **01_Parking_Lot_System.md** | Parking Lot | ⭐⭐⭐ | Singleton, Strategy, Factory | 15 min |
-| **02_Elevator_System.md** | Elevator | ⭐⭐⭐ | Strategy, State, Observer | 15 min |
-| **03_LRU_Cache.md** | LRU Cache + HashMap + Trie | ⭐⭐⭐ | Data Structures | 20 min |
-| **04_URL_Shortener.md** | URL Shortener | ⭐⭐ | Singleton, Strategy | 12 min |
-| **05_Rate_Limiter.md** | Rate Limiter | ⭐⭐⭐ | Strategy, Multiple Algorithms | 15 min |
-| **09_Chess_Game.md** | Chess Game | ⭐⭐⭐ | Template Method, Factory | 15 min |
-| **10_Tic_Tac_Toe.md** | Tic Tac Toe | ⭐⭐ | Strategy (AI), State | 10 min |
-| **12_Shopping_Cart.md** | E-commerce Cart | ⭐⭐⭐ | Strategy, State, Singleton | 12 min |
-| **15_Restaurant_Management.md** | Restaurant + Food Ordering | ⭐⭐⭐ | Multiple Patterns | 15 min |
-| **18_ATM_System.md** | ATM System | ⭐⭐ | State, Strategy | 8 min |
-| **29_File_System.md** | File System + Library + Vending | ⭐⭐⭐ | Composite, Singleton | 18 min |
+| File | System | Complexity | Key Patterns | Time to Read | UML Diagram |
+|------|--------|------------|--------------|--------------|-------------|
+| **01_Parking_Lot_System.md** | Parking Lot | ⭐⭐⭐ | Singleton, Strategy, Factory | 15 min | ✅ |
+| **02_Elevator_System.md** | Elevator | ⭐⭐⭐ | Strategy, State, Observer | 15 min | ✅ |
+| **03_LRU_Cache.md** | LRU Cache + HashMap + Trie | ⭐⭐⭐ | Data Structures | 20 min | ✅ |
+| **04_URL_Shortener.md** | URL Shortener | ⭐⭐ | Singleton, Strategy | 12 min | ✅ |
+| **05_Rate_Limiter.md** | Rate Limiter | ⭐⭐⭐ | Strategy, Multiple Algorithms | 15 min | ✅ |
+| **09_Chess_Game.md** | Chess Game | ⭐⭐⭐ | Template Method, Factory | 15 min | ✅ |
+| **10_Tic_Tac_Toe.md** | Tic Tac Toe | ⭐⭐ | Strategy (AI), State | 10 min | ✅ |
+| **12_Shopping_Cart.md** | E-commerce Cart | ⭐⭐⭐ | Strategy, State, Singleton | 12 min | ✅ |
+| **15_Restaurant_Management.md** | Restaurant + Food Ordering | ⭐⭐⭐ | Multiple Patterns | 15 min | ✅ |
+| **18_ATM_System.md** | ATM System | ⭐⭐ | State, Strategy | 8 min | ✅ |
+| **29_File_System.md** | File System + Library + Vending | ⭐⭐⭐ | Composite, Singleton | 18 min | ✅ |
+
+**NEW! 🎨 All systems now include UML Class Diagrams**
+- Visual representation of class relationships
+- Clear inheritance and composition diagrams
+- Design pattern visualization
+- See `UML_DIAGRAMS_INDEX.md` for complete guide
 
 ### 🚀 Quick Reference Guide
 
@@ -277,6 +285,7 @@ This comprehensive guide covers all major Low Level Design patterns and systems 
 |--------|-------|
 | Total Systems Covered | 40+ |
 | Detailed Designs | 11 files |
+| **UML Class Diagrams** | **11 diagrams** ✨ NEW! |
 | Design Patterns Covered | 20+ |
 | Code Examples | 100+ classes |
 | Total Pages | 150+ |
@@ -395,6 +404,8 @@ Trust your preparation, stay calm, think aloud, and show your problem-solving ap
 
 - **Start Preparation**: Open `INTERVIEW_GUIDE.md`
 - **Study First System**: Open `01_Parking_Lot_System.md`
+- **View UML Diagrams**: Open `UML_DIAGRAMS_INDEX.md` ✨ NEW!
+- **UML Reference**: Open `UML_QUICK_REFERENCE.md`
 - **Quick Review**: Open `REMAINING_SYSTEMS.md`
 - **Last Minute**: Read checklist in `INTERVIEW_GUIDE.md`
 

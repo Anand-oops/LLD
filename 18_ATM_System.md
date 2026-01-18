@@ -1,5 +1,109 @@
 # ATM System - Low Level Design
 
+## UML Class Diagram
+
+```
+┌─────────────────────────────────┐
+│           Card                  │
+├─────────────────────────────────┤
+│ - cardNumber: String            │
+│ - pin: String                   │
+│ - accountNumber: String         │
+│ - type: CardType                │
+├─────────────────────────────────┤
+│ + validatePin(pin): boolean     │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│          Account                │
+├─────────────────────────────────┤
+│ - accountNumber: String         │
+│ - balance: double               │
+│ - type: AccountType             │
+├─────────────────────────────────┤
+│ + withdraw(amount): boolean     │
+│ + deposit(amount)               │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│            ATM                  │
+├─────────────────────────────────┤
+│ - atmId: String                 │
+│ - location: String              │
+│ - state: ATMState               │
+│ - currentCard: Card             │
+│ - cashInventory: Map            │
+├─────────────────────────────────┤
+│ + insertCard(card)              │
+│ + authenticatePin(pin): boolean │
+│ + withdrawCash(amount): boolean │
+│ + ejectCard()                   │
+│ - calculateCashDispense()       │
+│ - dispenseCash(notes)           │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│       Transaction               │
+├─────────────────────────────────┤
+│ - transactionId: String         │
+│ - type: TransactionType         │
+│ - amount: double                │
+│ - timestamp: LocalDateTime      │
+│ - status: TransactionStatus     │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│   <<Singleton>>                 │
+│       BankSystem                │
+├─────────────────────────────────┤
+│ - instance: BankSystem          │
+│ - accounts: Map<String,Account> │
+│ - cards: Map<String,Card>       │
+├─────────────────────────────────┤
+│ + getInstance()                 │
+│ + getAccount(cardNum): Account  │
+│ + processTransaction()          │
+└─────────────────────────────────┘
+
+
+<<enumeration>>         <<enumeration>>
+CardType                AccountType
+──────────────         ──────────────
+DEBIT                  SAVINGS
+CREDIT                 CHECKING
+
+
+<<enumeration>>
+ATMState
+──────────────
+IDLE
+CARD_INSERTED
+AUTHENTICATED
+PROCESSING
+
+
+<<enumeration>>         <<enumeration>>
+TransactionType         TransactionStatus
+───────────────        ─────────────────
+WITHDRAWAL             PENDING
+DEPOSIT                SUCCESS
+BALANCE_INQUIRY        FAILED
+PIN_CHANGE             CANCELLED
+
+
+<<enumeration>>
+Denomination
+──────────────
+HUNDRED (100)
+FIFTY (50)
+TWENTY (20)
+TEN (10)
+```
+
 ## Core Classes
 
 ```java

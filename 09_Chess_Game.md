@@ -1,5 +1,118 @@
 # Chess Game - Low Level Design
 
+## UML Class Diagram
+
+```
+┌─────────────────────────────────┐
+│     <<abstract>>                │
+│         Piece                   │
+├─────────────────────────────────┤
+│ - color: Color                  │
+│ - position: Position            │
+│ - isAlive: boolean              │
+├─────────────────────────────────┤
+│ + canMove(board, to): boolean   │
+│ + getPossibleMoves(): List      │
+│ + move(position: Position)      │
+│ + kill()                        │
+└─────────────────────────────────┘
+           △
+           │
+    ┌──────┴──────┬──────┬──────┬───────┬──────┐
+    │             │      │      │       │      │
+┌──────┐  ┌──────┐  ┌────┐  ┌────┐  ┌──────┐  ┌────┐
+│ King │  │Queen │  │Rook│  │Bishop│  │Knight│  │Pawn│
+└──────┘  └──────┘  └────┘  └────┘  └──────┘  └────┘
+
+
+┌─────────────────────────────────┐
+│          Board                  │
+├─────────────────────────────────┤
+│ - board: Piece[][]              │
+│ - SIZE: int = 8                 │
+├─────────────────────────────────┤
+│ + getPiece(pos): Piece          │
+│ + isEmpty(pos): boolean         │
+│ + isPathClear(from, to): bool   │
+│ + movePiece(from, to): boolean  │
+│ + isValidPosition(): boolean    │
+│ - initializeBoard()             │
+└─────────────────────────────────┘
+           │ 8x8
+           ▼
+    ┌──────────┐
+    │  Piece   │
+    └──────────┘
+
+
+┌─────────────────────────────────┐
+│         Position                │
+├─────────────────────────────────┤
+│ - x: int                        │
+│ - y: int                        │
+├─────────────────────────────────┤
+│ + getX(): int                   │
+│ + getY(): int                   │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│          Player                 │
+├─────────────────────────────────┤
+│ - name: String                  │
+│ - color: Color                  │
+├─────────────────────────────────┤
+│ + getColor(): Color             │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│         ChessGame               │
+├─────────────────────────────────┤
+│ - board: Board                  │
+│ - white: Player                 │
+│ - black: Player                 │
+│ - currentPlayer: Player         │
+│ - status: GameStatus            │
+│ - moveHistory: List<Move>       │
+├─────────────────────────────────┤
+│ + makeMove(from, to): boolean   │
+│ - isCheckmate(): boolean        │
+│ - isStalemate(): boolean        │
+│ - isKingInCheck(): boolean      │
+│ - hasLegalMoves(): boolean      │
+│ - getOpponent(): Player         │
+└─────────────────────────────────┘
+           │ 1
+           │
+           │ 1
+           ▼
+    ┌──────────┐
+    │  Board   │
+    └──────────┘
+
+
+┌─────────────────────────────────┐
+│          Move                   │
+├─────────────────────────────────┤
+│ - from: Position                │
+│ - to: Position                  │
+│ - piece: Piece                  │
+│ - capturedPiece: Piece          │
+│ - timestamp: LocalDateTime      │
+└─────────────────────────────────┘
+
+
+<<enumeration>>     <<enumeration>>
+Color               GameStatus
+───────────         ──────────────
+WHITE               ACTIVE
+BLACK               CHECKMATE
+                    STALEMATE
+                    RESIGNATION
+                    DRAW
+```
+
 ## Core Classes
 
 ```java

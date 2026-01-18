@@ -1,5 +1,181 @@
 # Restaurant Management System - Low Level Design
 
+## UML Class Diagram
+
+```
+┌─────────────────────────────────┐
+│        Restaurant               │
+├─────────────────────────────────┤
+│ - name: String                  │
+│ - location: Location            │
+│ - menu: Menu                    │
+│ - tables: List<Table>           │
+│ - kitchen: KitchenService       │
+│ - reservationMgr: Manager       │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│          Table                  │
+├─────────────────────────────────┤
+│ - tableNumber: int              │
+│ - capacity: int                 │
+│ - status: TableStatus           │
+│ - currentOrders: List<Order>    │
+├─────────────────────────────────┤
+│ + isAvailable(): boolean        │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│          Menu                   │
+├─────────────────────────────────┤
+│ - items: Map<String,MenuItem>   │
+│ - categories: List<Category>    │
+├─────────────────────────────────┤
+│ + getItemsByCategory(): List    │
+└─────────────────────────────────┘
+           │ *
+           ▼
+    ┌──────────────┐
+    │  MenuItem    │
+    ├──────────────┤
+    │ - itemId     │
+    │ - name       │
+    │ - price      │
+    │ - category   │
+    └──────────────┘
+
+
+┌─────────────────────────────────┐
+│          Order                  │
+├─────────────────────────────────┤
+│ - orderId: String               │
+│ - table: Table                  │
+│ - items: List<OrderItem>        │
+│ - status: OrderStatus           │
+│ - createdAt: LocalDateTime      │
+│ - server: Staff                 │
+├─────────────────────────────────┤
+│ + calculateTotal(): double      │
+│ + addItem(item, qty)            │
+│ - notifyKitchen()               │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│        OrderItem                │
+├─────────────────────────────────┤
+│ - item: MenuItem                │
+│ - quantity: int                 │
+│ - specialInstructions: String   │
+│ - status: OrderItemStatus       │
+├─────────────────────────────────┤
+│ + getSubtotal(): double         │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│       Reservation               │
+├─────────────────────────────────┤
+│ - reservationId: String         │
+│ - customer: Customer            │
+│ - reservationTime: DateTime     │
+│ - partySize: int                │
+│ - assignedTable: Table          │
+│ - status: ReservationStatus     │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│    ReservationManager           │
+├─────────────────────────────────┤
+│ - reservations: Map             │
+├─────────────────────────────────┤
+│ + makeReservation(): Reservation│
+│ - findAvailableTable(): Table   │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│           Bill                  │
+├─────────────────────────────────┤
+│ - billId: String                │
+│ - order: Order                  │
+│ - subtotal: double              │
+│ - tax: double                   │
+│ - tip: double                   │
+│ - total: double                 │
+│ - status: BillStatus            │
+├─────────────────────────────────┤
+│ + calculate()                   │
+│ + addTip(amount)                │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│      KitchenService             │
+├─────────────────────────────────┤
+│ - orderQueue: Queue<Order>      │
+│ - chefs: List<Chef>             │
+├─────────────────────────────────┤
+│ + receiveOrder(order)           │
+│ - assignToChef()                │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│     <<abstract>>                │
+│         Staff                   │
+├─────────────────────────────────┤
+│ - staffId: String               │
+│ - name: String                  │
+│ - role: StaffRole               │
+│ - salary: double                │
+└─────────────────────────────────┘
+           △
+           │
+    ┌──────┴──────┐
+    │             │
+┌─────────┐  ┌──────────┐
+│  Chef   │  │  Waiter  │
+└─────────┘  └──────────┘
+
+
+┌─────────────────────────────────┐
+│          Chef                   │
+├─────────────────────────────────┤
+│ - currentOrders: List<Order>    │
+│ - specialization: String        │
+├─────────────────────────────────┤
+│ + prepareOrder(order)           │
+└─────────────────────────────────┘
+
+
+<<enumeration>>      <<enumeration>>
+TableStatus          OrderStatus
+──────────────       ─────────────
+AVAILABLE            PLACED
+OCCUPIED             PREPARING
+RESERVED             READY
+                     SERVED
+<<enumeration>>      PAID
+MenuCategory
+──────────────       <<enumeration>>
+APPETIZER            OrderItemStatus
+MAIN_COURSE          ───────────────
+DESSERT              PENDING
+BEVERAGE             PREPARING
+                     READY
+<<enumeration>>      SERVED
+StaffRole
+──────────────
+MANAGER
+CHEF
+WAITER
+BARTENDER
+```
+
 ## Core Classes
 
 ```java

@@ -3,6 +3,150 @@
 ## Problem Statement
 Design a rate limiter to control the rate of requests sent or received by a system.
 
+## UML Class Diagram
+
+```
+┌────────────────────────────────────┐
+│   <<interface>>                    │
+│      RateLimiter                   │
+├────────────────────────────────────┤
+│ + allowRequest(userId): boolean    │
+│ + reset(userId: String)            │
+└────────────────────────────────────┘
+           △
+           │
+    ┌──────┴─────────┬──────────────────┬────────────────┐
+    │                │                  │                │
+┌──────────────┐ ┌─────────────┐ ┌──────────────┐ ┌────────────────┐
+│TokenBucket   │ │SlidingWindow│ │SlidingWindow │ │  Distributed   │
+│RateLimiter   │ │LogLimiter   │ │CounterLimiter│ │  RateLimiter   │
+└──────────────┘ └─────────────┘ └──────────────┘ └────────────────┘
+
+
+┌────────────────────────────────────┐
+│   TokenBucketRateLimiter           │
+├────────────────────────────────────┤
+│ - buckets: Map<String,Bucket>      │
+│ - capacity: int                    │
+│ - refillRate: int                  │
+├────────────────────────────────────┤
+│ + allowRequest(): boolean          │
+│ + reset()                          │
+└────────────────────────────────────┘
+           │
+           │ contains
+           ▼
+    ┌──────────────────────┐
+    │      Bucket          │
+    ├──────────────────────┤
+    │ - capacity: int      │
+    │ - tokens: int        │
+    │ - lastRefillTime     │
+    │ - refillRate: int    │
+    ├──────────────────────┤
+    │ + tryConsume()       │
+    │ - refill()           │
+    └──────────────────────┘
+
+
+┌────────────────────────────────────┐
+│  SlidingWindowLogRateLimiter       │
+├────────────────────────────────────┤
+│ - requestLogs: Map<String,Queue>   │
+│ - maxRequests: int                 │
+│ - windowSizeMs: long               │
+├────────────────────────────────────┤
+│ + allowRequest(): boolean          │
+│ + reset()                          │
+└────────────────────────────────────┘
+
+
+┌────────────────────────────────────┐
+│ SlidingWindowCounterRateLimiter    │
+├────────────────────────────────────┤
+│ - counters: Map<String,Counter>    │
+│ - maxRequests: int                 │
+│ - windowSizeMs: long               │
+├────────────────────────────────────┤
+│ + allowRequest(): boolean          │
+│ + reset()                          │
+└────────────────────────────────────┘
+           │
+           │ contains
+           ▼
+    ┌──────────────────────────┐
+    │   WindowCounter          │
+    ├──────────────────────────┤
+    │ - currentWindowStart     │
+    │ - currentCount: int      │
+    │ - previousCount: int     │
+    │ - windowSizeMs: long     │
+    ├──────────────────────────┤
+    │ + tryAcquire(): boolean  │
+    └──────────────────────────┘
+
+
+┌────────────────────────────────────┐
+│    RateLimiterFactory              │
+├────────────────────────────────────┤
+│ + createRateLimiter()              │
+└────────────────────────────────────┘
+
+
+┌────────────────────────────────────┐
+│   DistributedRateLimiter           │
+├────────────────────────────────────┤
+│ - redis: RedisClient               │
+│ - maxRequests: int                 │
+│ - windowSizeMs: long               │
+├────────────────────────────────────┤
+│ + allowRequest(): boolean          │
+│ + reset()                          │
+└────────────────────────────────────┘
+           │
+           │ uses
+           ▼
+    ┌──────────────────────┐
+    │   RedisClient        │
+    ├──────────────────────┤
+    │ + eval()             │
+    │ + del()              │
+    └──────────────────────┘
+
+
+┌────────────────────────────────────┐
+│    MultiRuleRateLimiter            │
+├────────────────────────────────────┤
+│ - userRules: Map<String,List>      │
+│ - defaultRule: RateLimitRule       │
+├────────────────────────────────────┤
+│ + addRule(userId, rule)            │
+│ + allowRequest(): boolean          │
+│ + reset()                          │
+└────────────────────────────────────┘
+           │
+           │ contains
+           ▼
+    ┌──────────────────────────┐
+    │   RateLimitRule          │
+    ├──────────────────────────┤
+    │ - rateLimiter: Limiter   │
+    │ - name: String           │
+    ├──────────────────────────┤
+    │ + allowRequest()         │
+    │ + reset()                │
+    └──────────────────────────┘
+
+
+<<enumeration>>
+Algorithm
+─────────────
+TOKEN_BUCKET
+SLIDING_WINDOW_LOG
+SLIDING_WINDOW_COUNTER
+FIXED_WINDOW
+```
+
 ## Requirements
 1. Limit requests per user/API key
 2. Different rate limits for different users

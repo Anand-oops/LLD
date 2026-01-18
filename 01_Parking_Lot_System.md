@@ -3,6 +3,139 @@
 ## Problem Statement
 Design a parking lot system that can handle multiple floors, different vehicle types, and payment processing.
 
+## UML Class Diagram
+
+```
+┌─────────────────────────┐
+│     <<abstract>>        │
+│       Vehicle           │
+├─────────────────────────┤
+│ - licenseNumber: String │
+│ - type: VehicleType     │
+├─────────────────────────┤
+│ + getLicenseNumber()    │
+│ + getType()             │
+└─────────────────────────┘
+           △
+           │
+    ┌──────┴──────┬──────────┐
+    │             │          │
+┌───────┐    ┌────────┐  ┌───────┐
+│  Car  │    │  Bike  │  │ Truck │
+└───────┘    └────────┘  └───────┘
+
+
+┌──────────────────────────┐
+│     <<abstract>>         │
+│      ParkingSpot         │
+├──────────────────────────┤
+│ - spotId: String         │
+│ - type: SpotType         │
+│ - isAvailable: boolean   │
+│ - vehicle: Vehicle       │
+├──────────────────────────┤
+│ + canFitVehicle()        │
+│ + assignVehicle()        │
+│ + removeVehicle()        │
+└──────────────────────────┘
+           △
+           │
+    ┌──────┴────────┬──────────────┐
+    │               │              │
+┌─────────────┐ ┌─────────┐ ┌────────────────┐
+│ CompactSpot │ │LargeSpot│ │HandicappedSpot │
+└─────────────┘ └─────────┘ └────────────────┘
+
+
+┌──────────────────────────────┐
+│      ParkingFloor            │
+├──────────────────────────────┤
+│ - floorNumber: int           │
+│ - spots: List<ParkingSpot>   │
+│ - spotMap: Map<String,Spot>  │
+├──────────────────────────────┤
+│ + addSpot()                  │
+│ + findAvailableSpot()        │
+│ + getAvailableCount()        │
+└──────────────────────────────┘
+           │
+           │ 1..*
+           ▼
+┌──────────────────────────────┐
+│     ParkingSpot              │
+└──────────────────────────────┘
+
+
+┌──────────────────────────────┐
+│      ParkingTicket           │
+├──────────────────────────────┤
+│ - ticketId: String           │
+│ - licenseNumber: String      │
+│ - spotId: String             │
+│ - entryTime: LocalDateTime   │
+│ - exitTime: LocalDateTime    │
+│ - fee: double                │
+│ - status: TicketStatus       │
+├──────────────────────────────┤
+│ + markExit()                 │
+│ + getDurationInMinutes()     │
+└──────────────────────────────┘
+
+
+┌──────────────────────────────────┐
+│   <<Singleton>>                  │
+│      ParkingLot                  │
+├──────────────────────────────────┤
+│ - instance: ParkingLot           │
+│ - floors: List<ParkingFloor>     │
+│ - activeTickets: Map             │
+│ - pricingStrategy: Strategy      │
+├──────────────────────────────────┤
+│ + getInstance()                  │
+│ + parkVehicle()                  │
+│ + unparkVehicle()                │
+│ + displayAvailability()          │
+└──────────────────────────────────┘
+           │
+           │ uses
+           ▼
+┌──────────────────────────────┐
+│   <<interface>>              │
+│    PricingStrategy           │
+├──────────────────────────────┤
+│ + calculateFee()             │
+└──────────────────────────────┘
+           △
+           │
+    ┌──────┴──────┐
+    │             │
+┌─────────────┐ ┌──────────────────┐
+│HourlyPricing│ │FlatRatePricing   │
+└─────────────┘ └──────────────────┘
+
+
+<<enumeration>>
+VehicleType
+─────────────
+CAR
+BIKE
+TRUCK
+
+<<enumeration>>
+SpotType
+─────────────
+COMPACT
+LARGE
+HANDICAPPED
+
+<<enumeration>>
+TicketStatus
+─────────────
+ACTIVE
+PAID
+LOST
+```
+
 ## Requirements
 1. Multiple floors with multiple parking spots
 2. Different vehicle types (Car, Bike, Truck)

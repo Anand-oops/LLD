@@ -1,5 +1,187 @@
 # Online Shopping Cart - Low Level Design
 
+## UML Class Diagram
+
+```
+┌─────────────────────────────────┐
+│         Product                 │
+├─────────────────────────────────┤
+│ - id: String                    │
+│ - name: String                  │
+│ - description: String           │
+│ - price: double                 │
+│ - category: String              │
+│ - availableQuantity: int        │
+├─────────────────────────────────┤
+│ + isAvailable(qty): boolean     │
+│ + reduceQuantity(qty)           │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│        CartItem                 │
+├─────────────────────────────────┤
+│ - product: Product              │
+│ - quantity: int                 │
+├─────────────────────────────────┤
+│ + incrementQuantity(int)        │
+│ + decrementQuantity(int)        │
+│ + getSubtotal(): double         │
+└─────────────────────────────────┘
+           │
+           │ contains
+           ▼
+    ┌──────────┐
+    │ Product  │
+    └──────────┘
+
+
+┌─────────────────────────────────┐
+│      ShoppingCart               │
+├─────────────────────────────────┤
+│ - cartId: String                │
+│ - userId: String                │
+│ - items: Map<String,CartItem>   │
+│ - status: CartStatus            │
+├─────────────────────────────────┤
+│ + addItem(product, qty)         │
+│ + removeItem(productId)         │
+│ + updateQuantity(id, qty)       │
+│ + getTotal(): double            │
+│ + getItemCount(): int           │
+│ + clear()                       │
+│ + checkout()                    │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│          Order                  │
+├─────────────────────────────────┤
+│ - orderId: String               │
+│ - userId: String                │
+│ - items: List<OrderItem>        │
+│ - totalAmount: double           │
+│ - status: OrderStatus           │
+│ - shippingAddress: Address      │
+│ - payment: Payment              │
+│ - createdAt: LocalDateTime      │
+├─────────────────────────────────┤
+│ + confirmPayment(payment)       │
+│ + ship()                        │
+│ + deliver()                     │
+│ + cancel()                      │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│        OrderItem                │
+├─────────────────────────────────┤
+│ - product: Product              │
+│ - quantity: int                 │
+│ - priceAtPurchase: double       │
+├─────────────────────────────────┤
+│ + getSubtotal(): double         │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│         Payment                 │
+├─────────────────────────────────┤
+│ - paymentId: String             │
+│ - orderId: String               │
+│ - amount: double                │
+│ - method: PaymentMethod         │
+│ - status: PaymentStatus         │
+│ - timestamp: LocalDateTime      │
+├─────────────────────────────────┤
+│ + process()                     │
+└─────────────────────────────────┘
+           │
+           │ uses
+           ▼
+┌─────────────────────────────────┐
+│   <<interface>>                 │
+│     PaymentMethod               │
+├─────────────────────────────────┤
+│ + processPayment(amt): boolean  │
+│ + getPaymentDetails(): String   │
+└─────────────────────────────────┘
+           △
+           │
+    ┌──────┴──────┐
+    │             │
+┌─────────────┐ ┌──────────────┐
+│CreditCard   │ │  PayPal      │
+│Payment      │ │  Payment     │
+└─────────────┘ └──────────────┘
+
+
+┌─────────────────────────────────┐
+│         Address                 │
+├─────────────────────────────────┤
+│ - street: String                │
+│ - city: String                  │
+│ - state: String                 │
+│ - zipCode: String               │
+│ - country: String               │
+└─────────────────────────────────┘
+
+
+┌─────────────────────────────────┐
+│           User                  │
+├─────────────────────────────────┤
+│ - userId: String                │
+│ - name: String                  │
+│ - email: String                 │
+│ - addresses: List<Address>      │
+│ - cart: ShoppingCart            │
+│ - orderHistory: List<Order>     │
+├─────────────────────────────────┤
+│ + addAddress(address)           │
+│ + checkout(): Order             │
+└─────────────────────────────────┘
+           │ 1
+           │
+           │ 1
+           ▼
+    ┌──────────────┐
+    │ShoppingCart  │
+    └──────────────┘
+
+
+┌─────────────────────────────────┐
+│   <<Singleton>>                 │
+│    ShoppingSystem               │
+├─────────────────────────────────┤
+│ - instance: ShoppingSystem      │
+│ - productCatalog: Map           │
+│ - users: Map                    │
+├─────────────────────────────────┤
+│ + getInstance()                 │
+│ + addProduct(product)           │
+│ + getProduct(id): Product       │
+│ + registerUser(user)            │
+│ + searchProducts(): List        │
+└─────────────────────────────────┘
+
+
+<<enumeration>>      <<enumeration>>
+CartStatus           OrderStatus
+──────────────       ─────────────
+ACTIVE               PENDING
+CHECKED_OUT          CONFIRMED
+ABANDONED            SHIPPED
+                     DELIVERED
+                     CANCELLED
+<<enumeration>>      RETURNED
+PaymentStatus
+──────────────
+PENDING
+SUCCESS
+FAILED
+REFUNDED
+```
+
 ## Core Classes
 
 ```java
